@@ -1,179 +1,137 @@
+<h2>Spine</h2>
+
+<table cellpadding="0" cellspacing="0" class="table table-striped" id="sort3">
+<thead>
+<tr>
+<th>id</th>
+<th>article_id</th>
+<th>subject</th>
+<th>created</th>
+<th>spine.order</th>
+<th>-</th>
+</tr>
+</thead>
+<tbody>
+<?php 
+foreach ($spine as $item):
+    $item = Set::flatten($item);
+    $article_id = $item['Article.id'];
+?>
+<tr>
+<td><?= $item['BookSpine.id'] ?></td>
+<td><?= $item['Article.id'] ?></td>
+<td><?= $this->Html->link($item['Article.subject'], '/my/articles/' . $article_id . '/view'); ?></td>
+<td><?= $item['Article.created'] ?></td>
+<td><?= $item['BookSpine.order'] ?></td>
+<td>
+<?= $this->Html->link('<i class="icon-trash"></i>', '#', array('class' => 'btn btn-danger btn-mini', 'escape' => false)) ?>
+</td>
+</tr>
+<?php 
+endforeach;
+?>
+</tbody>
+</table>
+
+<div class="row-fluid">
+<?= $this->Html->link('글 추가', '#', array('class' => 'btn', 'id' => 'btn1')) ?>
+<?= $this->Html->link('순서 변경', '#', array('class' => 'btn')) ?>
+</div>
+
 <?php
-function printNodes($nodes, $depth = 0) {
-    if (empty($nodes)) {
-        return;
-    }
-
-    $class = '';
-    if ($depth == 0) {
-        $class = 'class="sortable"';
-    }
-    echo "<ol $class>";
-    foreach($nodes as $node) {
-        $n = $node['Toc'];
-
-        $editable = ($depth > 0) ?  true : false;
-        echo sprintf('<li id="%s" data-name="%s" data-article_id="%d">',
-                     'list_' . $n['id'], 
-                     h($n['name']),
-                     (($n['obj_type'] == 'article') ? $n['obj_id'] : 0)
-                     );
-        echo '<div>'
-            .  sprintf('[#%d] %s %s', 
-                    $n['id'],
-                    sprintf('<span class="%s" data-id="%d">%s</span>',
-                        ($editable ? 'editable' : ''),
-                        $n['id'],
-                        h($n['name'])
-                    ),
-                    sprintf(' <a href="#" class="deleteme" data-id="%d">DEL</a>',
-                    $n['id']
-                    )
-                )
-            . '</div>';
-        printNodes($node['children'], ++$depth);
-    }
-    echo '</ol>';
-}
-
-$this->Html->script('jquery-1.8.1.min', false);
-$this->Html->script('underscore-min', false);
+// $this->Html->script('http://code.jquery.com/ui/1.8.18/jquery-ui.min.js', false);
 $this->Html->script('jquery-ui-1.8.23.custom.min', false);
-$this->Html->script('jquery.mjs.nestedSortable', false);
-$this->Html->script('json2', false);
-$this->Html->script('http://www.appelsiini.net/download/jquery.jeditable.js', false);
+$this->Html->script('underscore', false);
 ?>
-<style type="text/css">
-div.content-block span.editable form {
-    display: inline;
-}
-div.content-block span.editable input {
-    display: inline !important;
-    width: 10em !important;
-}
-</style>
-
-<?php
-$this->append('css');
-printf('<link rel="stylesheet/less" type="text/css" href="%s" />', $this->Html->url('/css/nest-sortable.less'));
-$this->end();
-?>
-<h2><?= h($book['Book.subject']) ?></h2>
-<div>
-<?php pr($toc); ?>
-<?php //printNodes($toc_items); ?>
-</div>
-<div>
-<a id="to_array" href="#">to array</a> | 
-<a id="add_item" href="#">add item</a>
-</div>
-
-<?php pr($this->viewVars); ?>
-
-<?php
-echo $this->Form->create('Toc', array('url' => '/books/toc_update/' . $book['Book.id'], 'id' => 'UpdateJson'));
-echo $this->Form->input('json', array('type' => 'text', 'value' => '', 'id' => 'txt-update-json'));
-echo $this->Form->submit('Update()');
-echo $this->Form->end();
-?>
-
 <script>
-$(document).ready(function(){
-
-    var getTocJson = function(e) {
-        arraied = $('ol.sortable').nestedSortable('toArray', {startDepthCount: 0});
-        //console.log(JSON.stringify(arraied));
-
-        var data = new Array();
-        var order = [];
-        _.each(arraied, function(element, n) {
-            if (n == 0) { return; }
-
-            //console.log(JSON.stringify(element));
-            element.id = element.item_id;
-            element.name = $('#list_' + element.id).attr('data-name');
-            element.article_id = $('#list_' + element.id).attr('data-article_id');
-            if (typeof order[element.depth] == 'undefined') {
-                order[element.depth] = 1;
-            } else {
-                order[element.depth]++;
-            }
-            element.order = order[element.depth];
-
-            //console.log(JSON.stringify(element));
-            //console.log('-----');
-            data[data.length] = element;
-        });
-
-        json_string = JSON.stringify(data);
-        //$('#toArrayOutput').html(json_string);
-        $('#txt-update-json').val(json_string);
-
-        return true;
-    }
-
-    $('.sortable').nestedSortable({
-        handle: 'div',
-        items: 'li',
-        protectRoot: true,
-        toleranceElement: '> div'
+// Return a helper with preserved width of cells
+var fixHelper = function(e, ui) {
+    ui.children().each(function() {
+        $(this).width($(this).width());
     });
+    return ui;
+};
 
-    $('.deleteme').click(function() {
-        var obj_id = $(this).attr('data-id');
-        $('#list_' + obj_id).remove();
+/*
+$("#sort tbody").sortable({
+    helper: fixHelper
+}).disableSelection();
+
+var fixHelperModified = function(e, tr) {
+    var $originals = tr.children();
+    var $helper = tr.clone();
+    $helper.children().each(function(index)
+    {
+      $(this).width($originals.eq(index).width())
     });
+    return $helper;
+};
 
-    $('#to_array').click(getTocJson);
+$("#sort2 tbody").sortable({
+    helper: fixHelperModified 
+    
+}).disableSelection();
+*/
 
-    $('#UpdateJson').submit(function() {
-        return getTocJson();
-    });
 
-
-    $('#add_item').click(function() {
-        var new_id = _.uniqueId() + 1000;
-        $('ol.sortable > li > ol').append(
-            '<li id="list_' + new_id + '" data-article_id="0" data-name="undefined">'
-            + '<div>'
-                + '<span class="editable" data-id="' + new_id + '">new toc item (' + new_id + ')</span>'
-                + '<a href="#" class="deleteme" data-id="' + new_id + '">DEL</a>'
-            + '</div>'
-            + '</li>');
-
-        $('#list_' + new_id).find('.editable').editable(
-            function(value, settings) {
-                var id = $(this).attr('data-id');
-                $('#list_' + id).attr('data-name', value);
-                return value;
-            }, {
-                type : 'text', 
-                submit : 'OK'
-            } 
-        );
-
-        $('#list_' + new_id).find('.deleteme').click(function() {
-            var obj_id = $(this).attr('data-id');
-            $('#list_' + obj_id).remove();
-        });
-    });
-
-    $('.editable').editable(function(value, settings) {
-            var id = $(this).attr('data-id');
-            $('#list_' + id).attr('data-name', value);
-            return value;
-        }, {
-            type : 'text', 
-            submit : 'OK'
-        }
-    );
+$(document).ready(function() {
+$("#sort3 tbody").sortable({
+    helper: fixHelper
+}).disableSelection();
+// $("#sort3 tbody").sortable().disableSelection();
 });
 </script>
 
-<?php
-echo $this->Form->create('Toc', array('url' => '/books/toc_add'));
-echo $this->Form->input('book_id', array('type' => 'text', 'value' => $book['Book.id']));
-echo $this->Form->input('parent_id', array('type' => 'text'));
-echo $this->Form->input('name', array('type' => 'text'));
-echo $this->Form->submit('Submit()');
-?>
+
+<div class="modal hide fade" id="myModal">
+  <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+    <h3>Modal header</h3>
+  </div>
+  <div class="modal-body">
+
+<table cellpadding="0" cellspacing="0" class="table table-striped" id="article_list">
+<thead>
+<tr>
+<th>&nbsp;</th>
+<th>id</th>
+<th>category</th>
+<th>subject</th>
+<th>created</th>
+</tr>
+</thead>
+<tbody>
+</tbody>
+</table>
+
+
+  </div>
+  <div class="modal-footer">
+    <a href="#" class="btn">Close</a>
+    <a href="#" class="btn btn-primary">Save changes</a>
+  </div>
+</div>
+
+<script>
+$('#btn1').click(function() {
+    $('#myModal').modal({ keyboard: false });
+
+    var rootURL = '<?= $this->Html->url('/') ?>';
+    $.ajax({
+        type: 'GET',
+        url: rootURL + 'my/articles.json',
+        dataType: 'json',
+        success: function(r) { 
+            console.log(r); 
+            var compiled = _.template("<tr>" +
+                "<td><input type=\"checkbox\" /></td>" +
+                "<td><%= id %></td><td><%= category_id %></td><td><%= subject %></td><td><%= created %></tr>");
+            $.each(r, function(index, value) {
+                var html = compiled(value);
+                $('#article_list tbody').append(html);
+            });
+        }
+    })
+
+});
+</script>

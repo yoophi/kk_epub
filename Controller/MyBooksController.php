@@ -136,9 +136,7 @@ class MyBooksController extends AppAuthController {
 		$this->Book->id = $id;
 
         $spine  = $this->Book->getSpine($id);
-        $toc    = $this->Book->getToc($id);
         $book   = $this->Book->getBookInfo($id);
-        pr($book);
 
         $this->set(compact('spine', 'toc', 'book'));
     }

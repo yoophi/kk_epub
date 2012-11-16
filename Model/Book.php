@@ -58,26 +58,15 @@ class Book extends AppModel {
         }
 
         $this->BookSpine->bindModel(array('belongsTo' => array('Article')));
-//        $joins = array(
-//        'table' => 'articles',
-//        'alias' => 'Article',
-//        'type' => 'LEFT',
-//        'conditions' => 
-//            'BookSpine.article_id = Article.id'
-//        );
+        $this->BookSpine->unbindModel(array('belongsTo' => array('Book')));
+
         $conditions = array('BookSpine.book_id' => $book_id);
-        $order = 'BookSpine.order ASC';
-        $contain = array('Article');
-        $fields = array('Book.*', 'BookSpine.*', 'Article.subject');
+        $order      = 'BookSpine.order ASC';
+        $contain    = array('Article');
+        $fields     = array('BookSpine.*', 'Article.id', 'Article.subject', 'Article.created');
         $items = $this->BookSpine->find('all', compact('conditions', 'order', 'contain', 'fields'));
-        pr($items);
-        $return = array();
 
-        foreach ($items as $k => $v) {
-            $return[] = $v['BookSpine'];
-        }
-
-        return $return;
+        return $items;
     }
 
 }

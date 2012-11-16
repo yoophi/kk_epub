@@ -16,9 +16,29 @@ class MyArticlesController extends AppAuthController {
     protected $__currentBookId = null;
 
     //
-    public $allowJsonRequest = array('index');
+    public $allowJsonRequest = array('index', 'add', 'edit', 'delete');
 
     function index() {
+		if ($this->isJsonRequest()) {
+            $fields = Set::flatten(
+                    array('Article' => array(
+                            'id',
+                            'category_id',
+                            'subject',
+                            'created'
+                            )
+                        )
+                    );
+			$articles = $this->Article->find('all', compact('conditions', 'fields'));
+			foreach ($articles as $key => &$value) {
+				$value = $value['Article'];
+			}
+
+			$this->set('res', $articles);
+			$this->set('_serialize', 'res');
+            return;
+		}
+
 		$this->Article->recursive = 0;
         $this->paginate['Article']['conditions'][] = array('Article.user_id' => $this->Auth->user('id'));
         $articles = $this->paginate();
