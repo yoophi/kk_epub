@@ -93,6 +93,15 @@ Configure::write('Dispatcher.filters', array(
 ));
 
 /**
+ * Load configuration file (site.php)
+ */
+try {
+    Configure::load('site');
+} catch(Exception $e) {
+    echo $e->getMessage();
+}
+
+/**
  * Configures default file logging options
  */
 App::uses('CakeLog', 'Log');

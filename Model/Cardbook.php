@@ -7,7 +7,10 @@ App::uses('AppModel', 'Model');
  */
 class Cardbook extends AppModel {
 
-/**
+    public $hasMany = array('CardbookSpine');
+    public $actsAs = array('Containable');
+
+    /**
  * Validation rules
  *
  * @var array
@@ -51,4 +54,21 @@ class Cardbook extends AppModel {
 			'order' => ''
 		)
 	);
+
+    public function getBookInfo($cardbook_id) {
+        if (empty($cardbook_id)) {
+            return false;
+        }
+
+        $this->unbindModel(array('hasMany' => array('CardbookSpine')));
+
+        $conditions = array('Cardbook.id' => $cardbook_id);
+        $fields = array('Cardbook.*', 'User.id', 'User.username', 'User.email');
+        $this->bindModel(array('belongsTo' => array('User')));
+
+        $book_info = $this->find('first', compact('conditions', 'fields'));
+        $book_info = Set::flatten($book_info);
+        return $book_info;
+    }
+
 }

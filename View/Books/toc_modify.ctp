@@ -58,7 +58,7 @@ $this->append('css');
 printf('<link rel="stylesheet/less" type="text/css" href="%s" />', $this->Html->url('/css/nest-sortable.less'));
 $this->end();
 ?>
-<h2><?= h($book['subject']) ?></h2>
+<h2><?= h($cardbook['subject']) ?></h2>
 <div>
 <?php printNodes($toc_items); ?>
 </div>
@@ -68,7 +68,7 @@ $this->end();
 </div>
 
 <?php
-echo $this->Form->create('Toc', array('url' => '/books/toc_update/' . $book['id'], 'id' => 'UpdateJson'));
+echo $this->Form->create('Toc', array('url' => '/books/toc_update/' . $cardbook['id'], 'id' => 'UpdateJson'));
 echo $this->Form->input('json', array('type' => 'text', 'value' => '', 'id' => 'txt-update-json'));
 echo $this->Form->submit('Update()');
 echo $this->Form->end();
@@ -169,7 +169,7 @@ $(document).ready(function(){
 
 <?php
 echo $this->Form->create('Toc', array('url' => '/books/toc_add'));
-echo $this->Form->input('book_id', array('type' => 'text', 'value' => $book['id']));
+echo $this->Form->input('book_id', array('type' => 'text', 'value' => $cardbook['id']));
 echo $this->Form->input('parent_id', array('type' => 'text'));
 echo $this->Form->input('name', array('type' => 'text'));
 echo $this->Form->submit('Submit()');

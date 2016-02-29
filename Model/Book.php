@@ -1,5 +1,8 @@
 <?php
 App::uses('AppModel', 'Model');
+/**
+ * @property BookSpine $BookSpine
+ */
 class Book extends AppModel {
 
     public $hasMany = array('BookSpine');
@@ -69,5 +72,15 @@ class Book extends AppModel {
         return $items;
     }
 
+    public function addSpine($book_id, $article_id) {
+        $data = array('book_id' => $book_id, 'article_id' => $article_id);
+        // TODO: check if book_id/article_id aleady exists
+        $this->BookSpine->create();
+        if ($this->BookSpine->save(array('BookSpine' => $data))) {
+            return true;
+        }
+
+        return false;
+    }
 }
 ?>

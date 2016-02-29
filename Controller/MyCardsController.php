@@ -3,27 +3,27 @@ App::uses('AppAuthController', 'Controller');
 /**
  * Articles Controller
  *
- * @property Article $Article
- * @property Book $Book
+ * @property Card $Card
+ * @property Cardbook $Cardbook
  */
-class MyArticlesController extends AppAuthController {
+class MyCardsController extends AppAuthController {
 
-    public $uses = array('Article', 'Book');
-    public $paginate = array('Article' => array(
+    public $uses = array('Card', 'Cardbook');
+    public $paginate = array('Card' => array(
         'conditions' => array(),
-        'fields' => array('Article.id', 'Article.user_id', 'Article.subject', 'Article.created', 'Article.category_id', 'Category.name')
+        'fields' => array('Card.id', 'Card.user_id', 'Card.subject', 'Card.created', 'Card.category_id', 'Category.name')
     ));
 
-    protected $__currentBookId = null;
+    protected $__currentCardbookId = null;
 
     //
     public $allowJsonRequest = array('index', 'add', 'edit', 'delete');
 
     function index() {
-		if ($this->isJsonRequest()) {
+        if ($this->isJsonRequest()) {
             $fields = Set::flatten(
                 array(
-                    'Article' => array(
+                    'Card' => array(
                         'id',
                         'category_id',
                         'subject',
@@ -31,37 +31,28 @@ class MyArticlesController extends AppAuthController {
                     )
                 )
             );
-			$articles = $this->Article->find('all', compact('conditions', 'fields'));
-			foreach ($articles as $key => &$value) {
-				$value = $value['Article'];
-			}
-
-			$this->set('res', $articles);
-			$this->set('_serialize', 'res');
-            return;
-		}
-
-		$this->Article->recursive = 0;
-        $this->paginate['Article']['conditions'][] = array('Article.user_id' => $this->Auth->user('id'));
-        $articles = $this->paginate();
-
-        if ($this->isJsonRequest()) {
-            $f_articles = array();
-            foreach($articles as $key => $item) {
-                $f_articles[$key] = Set::flatten($item);
+            $cards = $this->Card->find('all', compact('conditions', 'fields'));
+            foreach ($cards as $key => &$value) {
+                $value = $value['Card'];
             }
-            $this->set('articles', $f_articles);
-        } else {
-            $this->set('articles', $articles);
+
+            $this->set('res', $cards);
+            $this->set('_serialize', 'res');
+            return;
         }
-        $this->set('_serialize', array('articles'));
+
+        $this->Card->recursive = 0;
+        $this->paginate['Card']['conditions'][] = array('Card.user_id' => $this->currentUserId);
+        $cards = $this->paginate();
+
+        $this->set('cards', $cards);
     }
 
     function add() {
 		if ($this->request->is('post')) {
-            $this->request->data['Article']['user_id'] = $this->currentUserId;
-			$this->Article->create();
-			if ($this->Article->save($this->request->data)) {
+            $this->request->data['Card']['user_id'] = $this->currentUserId;
+			$this->Card->create();
+			if ($this->Card->save($this->request->data)) {
 				$this->Session->setFlash(__('The article has been saved'));
 				$this->redirect(array('action' => 'index'));
 			} else {
@@ -174,18 +165,17 @@ class MyArticlesController extends AppAuthController {
     }
 
     public function beforeRender() {
-        if (!empty($this->__currentBookId)) {
-            $current_book_id = $this->__currentBookId;
-            $current_book_toc = $this->Book->getBookToc($current_book_id);
-            $current_book_info = $this->Book->getBookInfo($current_book_id);
+        if (!empty($this->__currentCardbookId)) {
+            $current_cardbook_id = $this->__currentCardbookId;
+            $current_cardbook_info = $this->Book->getBookInfo($current_cardbook_id);
 
-            $this->set(compact('current_book_toc', 'current_book_info', 'current_book_id'));
+            $this->set(compact('current_cardbook_info', 'current_book_id'));
         }
     }
 
     public function __setCurrentBookId($book_id) {
         if (!empty($book_id)) {
-            $this->__currentBookId = $book_id;
+            $this->__currentCardbookId = $book_id;
         }
     }
 

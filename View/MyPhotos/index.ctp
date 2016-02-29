@@ -25,14 +25,14 @@ $this->Html->script('app-photo', false);
 <script>
 $(function() {
     $('#fileupload').fileupload({
-		url: 'http://172.16.97.138/blueimp_file_handler/attachments'
+		url: '<?= Configure::read("Site.MU_URL") ?>'
 		, forceIframeTransport: true
 	});
 
     $('#fileupload').fileupload(
         'option',
         'redirect',
-        'http://npub2.vm/kk_epub2/result.html?%s'
+        '<?= Router::url("/result.html", true) ?>?%s'
     );
 
 	$('#fileupload').fileupload({

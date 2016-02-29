@@ -1,6 +1,6 @@
 <div class="books index">
     <div class="page-header">
-        <h1><?php echo __('Books');?></h1>
+        <h1><?php echo __('Cardbooks');?></h1>
     </div>
 
     <table cellpadding="0" cellspacing="0" class="table table-striped">
@@ -12,13 +12,13 @@
         </tr>
         </thead>
         <tbody>
-        <?php foreach ($books as $book): ?>
+        <?php foreach ($cardbooks as $cardbook): ?>
         <tr>
-            <td><?php echo h($book['Book']['id']); ?>&nbsp;</td>
-            <td><?php echo $this->Html->link($book['Book']['subject'], array('action' => 'view', 'id' => $book['Book']['id'])); ?>&nbsp;</td>
-            <td><?php echo h($book['Book']['created']); ?>&nbsp;</td>
+            <td><?php echo h($cardbook['Cardbook']['id']); ?>&nbsp;</td>
+            <td><?php echo $this->Html->link($cardbook['Cardbook']['subject'], array('action' => 'view', 'id' => $cardbook['Cardbook']['id'])); ?>&nbsp;</td>
+            <td><?php echo h($cardbook['Cardbook']['created']); ?>&nbsp;</td>
         </tr>
-        <?php endforeach; ?>
+            <?php endforeach; ?>
         </tbody>
     </table>
 
@@ -37,4 +37,5 @@
         echo $this->Paginator->next(__('next') . ' >', array(), null, array('class' => 'next disabled'));
         ?>
     </div>
+
 </div>

@@ -1,0 +1,4 @@
+<?php
+$config['Site']['MU_BASE'] = "http://yoophi.com/media_uploader";
+$config['Site']['MU_URL'] = $config['Site']['MU_BASE'] . "/attachments";
+?>

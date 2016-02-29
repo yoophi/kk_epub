@@ -47,6 +47,17 @@
 	Router::connect('/my/articles/*', array('controller' => 'my_articles', 'action' => 'index'));
 
 /**
+ * My Cards
+ */
+    foreach(array('view', 'edit', 'destroy') as $action) {
+        Router::connect("/my/cards/:id/$action/*", array('controller' => 'my_cards', 'action' => $action), array('id' => '[0-9]+'));
+    }
+	Router::connect('/my/cards/:id/*', array('controller' => 'my_cards', 'action' => 'view'), array('id' => '[0-9]+'));
+	Router::connect('/my/cards/index/*', array('controller' => 'my_cards', 'action' => 'index'));
+	Router::connect('/my/cards/add/*', array('controller' => 'my_cards', 'action' => 'add'));
+	Router::connect('/my/cards/*', array('controller' => 'my_cards', 'action' => 'index'));
+
+/**
  * My Books
  */
     foreach(array('view', 'edit', 'destroy', 'toc', 'toc_update', 'spine') as $action) {
@@ -56,6 +67,17 @@
 	Router::connect('/my/books/index/*', array('controller' => 'my_books', 'action' => 'index'));
 	Router::connect('/my/books/add/*', array('controller' => 'my_books', 'action' => 'add'));
 	Router::connect('/my/books/*', array('controller' => 'my_books', 'action' => 'index'));
+
+/**
+ * My Cardbooks
+ */
+    foreach(array('view', 'edit', 'destroy', 'toc', 'toc_update', 'spine') as $action) {
+        Router::connect("/my/cardbooks/:id/$action/*", array('controller' => 'my_cardbooks', 'action' => $action), array('id' => '[0-9]+'));
+    }
+	Router::connect('/my/cardbooks/:id/*', array('controller' => 'my_cardbooks', 'action' => 'view'), array('id' => '[0-9]+'));
+	Router::connect('/my/cardbooks/index/*', array('controller' => 'my_cardbooks', 'action' => 'index'));
+	Router::connect('/my/cardbooks/add/*', array('controller' => 'my_cardbooks', 'action' => 'add'));
+	Router::connect('/my/cardbooks/*', array('controller' => 'my_cardbooks', 'action' => 'index'));
 
 /**
  * My Photos

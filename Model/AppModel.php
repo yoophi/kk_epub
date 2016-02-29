@@ -31,4 +31,14 @@ App::uses('Model', 'Model');
  * @package       app.Model
  */
 class AppModel extends Model {
+
+    function add($data) {
+        $this->create();
+        if ($this->save(array($this->alias => $data))) {
+            $insert_id = $this->getLastInsertID();
+            return $insert_id;
+        }
+
+        return false;
+    }
 }

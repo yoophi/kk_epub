@@ -3,7 +3,7 @@ App::uses('AppAuthController', 'Controller');
 /**
  * Articles Controller
  *
- * @property Article $Article
+ * @property Photo $Photo
  */
 class MyPhotosController extends AppAuthController {
 
@@ -60,48 +60,21 @@ class MyPhotosController extends AppAuthController {
 
     function delete() {
     	if ($this->isJsonRequest()) {
-    		$this->__log(__METHOD__ . __LINE__);
-    		$id = $this->request->params['id'];
-    		$this->__log($id);
+    		$id = $this->request->params['photo_id'];
 			$this->Photo->id = $id;
-    		$this->__log(__METHOD__ . __LINE__);
-    		$this->__log($this->request);
+            $this->__log(print_r($this->request, true));
 			if (!$this->Photo->exists()) {
-    		$this->__log(__METHOD__ . __LINE__);
 				throw new NotFoundException(__('Invalid photo'));
 			}
-    		$this->__log(__METHOD__ . __LINE__);
 			if ($this->Photo->delete()) {
-    		$this->__log(__METHOD__ . __LINE__);
 				$this->set('res', true);
 			} else {
-    		$this->__log(__METHOD__ . __LINE__);
 				$this->set('res', false);
 			}
-    		$this->__log(__METHOD__ . __LINE__);
 			$this->set('_serialize', 'res');
 		}
     }
 
-	private function __getPayLoad() {
-		$payload = FALSE;
-		if (isset($_SERVER['CONTENT_LENGTH']) && $_SERVER['CONTENT_LENGTH'] > 0) {
-			$payload = '';
-			$httpContent = fopen('php://input', 'r');
-			while ($data = fread($httpContent, 1024)) {
-				$payload .= $data;
-			}
-			fclose($httpContent);
-		}
-
-		// check to make sure there was payload and we read it in
-		if(!$payload)
-			return FALSE;
-
-		// translate the JSON into an associative array
-		$obj = json_decode($payload, true);
-		return $obj;
-	}
 
 	protected function __log() {
 		$args = func_get_args();

@@ -42,20 +42,20 @@ class AppAuthController extends AppController {
 						'scope' => array('OR' => array(array('User.Role' => 'ROLE_USER'), array('User.ROLE' => 'ROLE_ADMIN'))),
 						'fields' => array('username' => 'username', 
 							              'password' => 'password'), 
-							              
 						)
 					)
 				));
 	public $helpers = array('Session', 'Html', 'Form');
+    public $currentUserId = null;
 
     function beforeFilter() {
     	if ($this->isJsonRequest() && $this->acceptJsonRequest()) {
-    	if (!$this->Auth->User('id')) {
-    	$this->viewClass = 'Json';
-    	$this->set('message', 'Not logged in');
-    	$this->set('_serialize', array('message'));
-    	$this->render();
-    	}
+            if (!$this->Auth->User('id')) {
+                $this->viewClass = 'Json';
+                $this->set('message', 'Not logged in');
+                $this->set('_serialize', array('message'));
+                $this->render();
+            }
     	}
         parent::beforeFilter();
         $this->currentUserId = $this->Auth->User('id');

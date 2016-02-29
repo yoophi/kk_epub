@@ -1,5 +1,5 @@
 <?php
-$book_id = $book['Book']['id'];
+$book_id = $cardbook['Book']['id'];
 
 function printToc($tocs) {
     if (empty($tocs)) {

@@ -1,35 +1,36 @@
 <?php
 App::uses('AppAuthController', 'Controller');
 /**
- * Articles Controller
+ * Cardbooks Controller
  *
- * @property Article $Article
- * @property Book $Book
+ * @property Cardbook $Cardbook
  */
-class MyBooksController extends AppAuthController {
+class MyCardbooksController extends AppAuthController {
 
-    public $uses = array('Book', 'Toc');
-    public $paginate = array('Book' => array('conditions' => array()));
-    public $allowJsonRequest = array('index', 
-            'spine_index', 'spine_add', 'spine_delete', 'spine_order_update');
+    public $uses = array('Cardbook');
+    public $paginate = array('Cardbook' => array('conditions' => array()));
+    public $allowJsonRequest = array(
+             'index', 
+             'spine_index', 'spine_add', 'spine_delete', 'spine_order_update'
+           );
 
     function index() {
-		$this->Book->recursive = 0;
-        $this->paginate['Book']['conditions'][] = array('Book.user_id' => $this->currentUserId);
-        $books = $this->paginate();
-		$this->set('books', $books);
-        $this->set('_serialize', array('books'));
+		$this->Cardbook->recursive = 0;
+        $this->paginate['Cardbook']['conditions'][] = array('Cardbook.user_id' => $this->currentUserId);
+        $cardbooks = $this->paginate();
+		$this->set('cardbooks', $cardbooks);
+        $this->set('_serialize', array('cardbooks'));
     }
 
     function view() {
-        $book_id = $this->getBookId();
-		$this->Book->id = $book_id;
-		if (!$this->Book->exists()) {
-			throw new NotFoundException(__('Invalid book'));
+        $cardbook_id = $this->getCardbookId();
+		$this->Cardbook->id = $cardbook_id;
+		if (!$this->Cardbook->exists()) {
+			throw new NotFoundException(__('Invalid cardbook'));
 		}
 
-        $book = $this->Book->getBookInfo($book_id);
-        $this->set(compact('book'));
+        $cardbook = $this->Cardbook->getBookInfo($cardbook_id);
+        $this->set(compact('cardbook'));
     }
 
 /**
@@ -39,7 +40,7 @@ class MyBooksController extends AppAuthController {
  * @return void
  */
 	public function edit() {
-        $id = $this->getBookId();
+        $id = $this->getCardbookId();
 		$this->Book->id = $id;
 		if (!$this->Book->exists()) {
 			throw new NotFoundException(__('Invalid book'));
@@ -99,30 +100,30 @@ class MyBooksController extends AppAuthController {
     }
 
     function toc() {
-        $id = $this->getBookId();
+        $id = $this->getCardbookId();
 		$this->Book->id = $id;
 		if (!$this->Book->exists()) {
 			throw new NotFoundException(__('Invalid book'));
 		}
 
-//         /** find book_node_id **/
-//         $conditions = array('obj_type' => 'book', 'obj_id' => $id);
-//         $book_node = $this->Toc->find('first', compact('conditions'));
-//         $book_node_id = $book_node['Toc']['id'];
-//         /** end find book_node_id **/
-// 
-// 		$book = $this->Book->read(null, $id);
-//         $toc = $this->Toc->children($book_node_id);
-//         $tocs = $this->Toc->find('threaded', array('conditions' => array('Toc.book_id' => $id), 'order' => 'Toc.order ASC'));
-// 
-//         $parent_ids = $this->Toc->generateTreeList(array('Toc.book_id'=>$id));
-//         // $parent_ids = array(0 => '- - -') + $parent_ids;
+        /** find book_node_id **/
+        $conditions = array('obj_type' => 'book', 'obj_id' => $id);
+        $book_node = $this->Toc->find('first', compact('conditions'));
+        $book_node_id = $book_node['Toc']['id'];
+        /** end find book_node_id **/
+
+		$book = $this->Book->read(null, $id);
+        $toc = $this->Toc->children($book_node_id);
+        $tocs = $this->Toc->find('threaded', array('conditions' => array('Toc.book_id' => $id), 'order' => 'Toc.order ASC'));
+
+        $parent_ids = $this->Toc->generateTreeList(array('Toc.book_id'=>$id));
+        // $parent_ids = array(0 => '- - -') + $parent_ids;
 
         $this->set(compact('book', 'toc', 'tocs', 'parent_ids'));
     }
 
     function spine() {
-        $id = $this->getBookId();
+        $id = $this->getCardbookId();
 //		$this->Book->id = $id;
 //
 //        $spine  = $this->Book->getSpine($id);
@@ -132,7 +133,7 @@ class MyBooksController extends AppAuthController {
         $this->set(compact('book'));
     }
 
-    protected function getBookId() {
+    protected function getCardbookId() {
         $book_id = null;
         foreach(array('book_id', 'id') as $key) {
             if (!empty($this->request->params[$key])) {
@@ -152,7 +153,7 @@ class MyBooksController extends AppAuthController {
             $this->setAction('spine');
             return;
         }
-        $id = $this->getBookId();
+        $id = $this->getCardbookId();
         $this->Book->id = $id;
 
         $spine  = $this->Book->getSpine($id);
@@ -166,7 +167,7 @@ class MyBooksController extends AppAuthController {
     }
 
     function spine_add() {
-        $book_id = $this->getBookId();
+        $book_id = $this->getCardbookId();
         $data = $this->__getPayLoad();
         $result = null;
         $this->log(print_r($data, true), 'rest');
@@ -202,7 +203,7 @@ class MyBooksController extends AppAuthController {
     }
 
     function spine_order_update() {
-        $book_id = $this->getBookId();
+        $book_id = $this->getCardbookId();
         $data = $this->__getPayLoad();
 
         foreach ($data as $item) {

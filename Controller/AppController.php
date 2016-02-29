@@ -42,15 +42,9 @@ class AppController extends Controller {
     }
 
     protected function acceptJsonRequest() {
-        if (!isset($this->allowJsonRequest)) {
-            return false;
-        }
-
-        if ($this->allowJsonRequest == '*') {
-            return true;
-        }
-
-        if (in_array($this->action, (array) $this->allowJsonRequest)) {
+        if ($this->allowJsonRequest == '*'
+            || !isset($this->allowJsonRequest)
+            || in_array($this->action, (array) $this->allowJsonRequest)) {
             return true;
         }
 
@@ -60,5 +54,24 @@ class AppController extends Controller {
     protected function isJsonRequest() {
         return isset($this->request->params['ext']) && $this->request->params['ext'] == 'json';
     }
+	protected function __getPayLoad() {
+		$payload = FALSE;
+		if (isset($_SERVER['CONTENT_LENGTH']) && $_SERVER['CONTENT_LENGTH'] > 0) {
+			$payload = '';
+			$httpContent = fopen('php://input', 'r');
+			while ($data = fread($httpContent, 1024)) {
+				$payload .= $data;
+			}
+			fclose($httpContent);
+		}
+
+		// check to make sure there was payload and we read it in
+		if(!$payload)
+			return FALSE;
+
+		// translate the JSON into an associative array
+		$obj = json_decode($payload, true);
+		return $obj;
+	}
 
 }
