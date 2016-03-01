@@ -26,10 +26,6 @@ $(function () {
     $('#fileupload').fileupload(
         'option',
         'redirect',
-        //window.location.href.replace(
-        //    /\/[^\/]*$/,
-        //    '/kk_epub2/result.html?%s'
-        //)
         'http://npub2.vm/kk_epub2/result.html?%s'
     );
 

@@ -49,8 +49,6 @@ $(function() {
 			data.context.text('Upload finished.');
 			$.each(data.result, function(index, file) {
 				$('<p/>').text(file.name).appendTo(document.body);
-				console.log({ 'xx': file});
-
 				Photos.create({ filename: file.name, url: file.url, thumb_url: file.thumbnail_url });
 			});
 		}

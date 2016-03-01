@@ -1,10 +1,4 @@
 <?
-/*
-echo $this->Html->script('require-jquery.js', array(
-    'data-main' => $this->Html->url('/js/main-tinymce'),
-    'inline' => false
-    ));
-    */
 echo $this->Html->script('require-jquery.js', array(
     'data-main' => $this->Html->url('/js/main-app-photo'),
     'inline' => false

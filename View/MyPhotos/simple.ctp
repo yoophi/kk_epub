@@ -1,9 +1,4 @@
-<!--
-<input id="fileupload" type="file" name="files[]" data-url="/jQuery-File-Upload/server/php/" multiple>
-<input id="fileupload" type="file" name="files[]" data-url="http://172.16.97.138/blueimp_file_handler/attachments" multiple>
--->
 <input id="fileupload" type="file" name="files[]" multiple>
-
 
 <!-- The jQuery UI widget factory, can be omitted if jQuery UI is already included -->
 <script src="<?= $this->Html->url('/js/jquery.ui.widget.js'); ?>"></script>
@@ -13,14 +8,14 @@
 <script>
 $(function() {
     $('#fileupload').fileupload({
-		url: 'http://172.16.97.138/blueimp_file_handler/attachments'
+		url: '<?= Configure::read("Site.MU_URL") ?>'
 		, forceIframeTransport: true
 	});
 
     $('#fileupload').fileupload(
         'option',
         'redirect',
-        'http://npub2.vm/kk_epub2/result.html?%s'
+        '<?= Router::url("/result.html", true) ?>?%s'
     );
 
 	$('#fileupload').fileupload({
